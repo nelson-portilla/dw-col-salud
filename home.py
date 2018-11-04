@@ -12,17 +12,21 @@ global objconsulta
 
 @app.route('/')
 def cargar():
-    logging.info("Ingresando en cargar, index")
+    logging.info("Ingresando en cargar")
     lista_ips=objconsulta.dim_ips()
-    logging.info(lista_ips)
+    # logging.info(lista_ips)
     return render_template('index.html', lista_ips=lista_ips)
 
 @app.route('/', methods=['POST'])
 def obtener():
     logging.info("Ingresando en obtener")
-    texto=str(request.form['id_entrada'])
-    print ("HOLA MUNDO!: ", texto)
-    return render_template('queryuno.html', texto=texto, objetos=[1,2,3])
+    print(request.form)
+    logging.error(request.form)
+    #ips=str(request.form['comboips'])
+    #tiempo=str(request.form['radtiempomin'])
+    #logging.info(ips)
+    #logging.info(tiempo)
+    return render_template('index.html', lista_ips="")
 
 if __name__ == '__main__':
     # CONFIGURACION PARA LOG
