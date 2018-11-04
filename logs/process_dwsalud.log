@@ -1,0 +1,10 @@
+INFO[11/04/2018 03:05:23 PM]: Creando nuevo objeto Consulta
+INFO[11/04/2018 03:05:23 PM]: Conexion a base de datos exitosa localhost: ('PostgreSQL 9.5.14 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609, 64-bit',)
+WARNING[11/04/2018 03:05:23 PM]:  * Debugger is active!
+INFO[11/04/2018 03:05:23 PM]:  * Debugger PIN: 101-809-122
+INFO[11/04/2018 03:05:33 PM]: Ingresando en cargar, index
+INFO[11/04/2018 03:05:33 PM]: [(None, None), ('Clinica de Occidente', ''), ('Clinica Valle del Lili', ''), ('Hospital Infantil Cl\xc3\xadnica Noel', '3'), ('Hospital Universitario del Valle Evaristo Garc\xc3\xada', '4'), ('Hospital San Juan de Dios', '1'), ('Hospital La Buena Esperanza de Yumbo ', '3'), ('Hospital Isa\xc3\xadas Duarte Cancio', '2'), ('Centro Medico Carlos Ardila Lulle ', ''), ('Centro Medico San Ignacio', '')]
+INFO[11/04/2018 03:05:33 PM]: 127.0.0.1 - - [04/Nov/2018 15:05:33] "GET / HTTP/1.1" 200 -
+INFO[11/04/2018 03:05:33 PM]: 127.0.0.1 - - [04/Nov/2018 15:05:33] "GET /static/echarts.min.js HTTP/1.1" 200 -
+INFO[11/04/2018 03:05:33 PM]: 127.0.0.1 - - [04/Nov/2018 15:05:33] "GET /static/fondo.png HTTP/1.1" 200 -
+INFO[11/04/2018 03:05:34 PM]: 127.0.0.1 - - [04/Nov/2018 15:05:34] "GET /favicon.ico HTTP/1.1" 404 -
