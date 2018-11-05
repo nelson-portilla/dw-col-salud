@@ -20,34 +20,64 @@
             integrity="sha384-pjaaA8dDz/5BgdFUPX6M/9SUZv4d12SUPF0axWc+VRZkx5xU3daN+lYb49+Ax+Tl"
             crossorigin="anonymous"></script>
 
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css"></script>
+    <script src="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css"></script>
+
+
+    <!-- Resources -->
+    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script src="https://www.amcharts.com/lib/3/pie.js"></script>
+    <script src="https://www.amcharts.com/lib/3/plugins/animate/animate.min.js"></script>
+    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all"/>
+    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+{#    <script src="static/pietcirugia.js"></script>#}
 
 </head>
 <body style='background-image: url("/static/fondo.png"); background-size: 100%; background-repeat: repeat;'>
-<div class="container" align="center" >
-        <h1 class="animated fadeInUp" style="animation-duration: 2s;animation-delay: 0s;text-shadow: 0px 5px 13px black;">Bienvenido a Colombia
-            Saludable</h1>
+<div class="container" align="center">
+    <h1 class="animated fadeInUp" style="animation-duration: 2s;animation-delay: 0s;text-shadow: 0px 5px 13px black;">
+        Bienvenido a Colombia
+        Saludable</h1>
 </div>
 <hr style="border-top: 3px double #8c8b8b;">
+<h4 align="center"><i>Promedio en tiempos de espera</i></h4>
 <form id="filtros" method="post">
     <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <b>Seleccione consulta:</b>
+                <select class="form-control form-control-lg" name="combounidad">
+                    <option>Tiempos de espera en citas medicas</option>
+                    <option>Tiempos de espera en urgencias</option>
+                </select>
+            </div>
+        </div>
         <div class="row">
 
             <div class="col-sm">
                 <div class="form-group">
-                    <b for="sel1">Seleccione IPS:</b>
-                    <select class="form-control" id="comboips" name="comboips">
-                        <option>todas</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
+                    <b for="sel1">Seleccione filtro:</b>
+                    <select class="form-control" id="combofiltro" name="combofiltro">
+                        <option>Por institucion</option>
+                        <option>Por sexo</option>
+                        <option>Por grupos de edad</option>
+                        <option>Por tipo de usuario</option>
+                        <option>Por estado civil</option>
                     </select>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="radiotiempo" id="radtiempomin" checked>Tiempo en minutos</label>
+                    <label><input type="radio" name="radiotiempo" id="radtiempomin" value="tiempo_espera_minutos"
+                                  checked>Tiempo en minutos</label>
                 </div>
                 <div class="radio">
-                    <label><input type="radio" name="radiotiempo" id="radtiemposeg">Tiempo en segundos</label>
+                    <label><input type="radio" name="radiotiempo" id="radtiemposeg" value="tiempo_espera_segundos">Tiempo
+                        en segundos</label>
                 </div>
+
+
             </div>
             <div class="col-sm">
                 <b>Periodo</b><br>
@@ -60,14 +90,17 @@
         </div>
         <div class="row">
             <div class="col-sm">
-                <Button id="boton_indexar" type="submit" form="filtros" class="btn btn-success" ><span class="glyphicon glyphicon-ok" ></span> Consultar</Button>
+                <Button id="boton_indexar" onclick="setcriterio()" type="submit" form="filtros" class="btn btn-success">
+                    <span class="glyphicon glyphicon-ok"></span> Consultar
+                </Button>
             </div>
         </div>
     </div>
+    <input name="criterio" id="criterio" type="hidden"/>
 </form>
-
+<hr style="border-top: 3px double #8c8b8b;">
 <div class="container">
-    <table class="table" id="table">
+    <table id="tabla_resultados" class="table table-striped table-bordered">
         <thead class="thead-dark">
         <tr>
             <th scope="col">#</th>
@@ -75,50 +108,52 @@
             <th scope="col">nivel</th>
         </tr>
         </thead>
-        <tbody id="myTable">
+        <tbody>
         {% for row in lista_ips %}
             <tr>
                 <th scope="row">{{ loop.index }}</th>
                 <td>{{ row[0] }}</td>
-                <td>{{ row[1] }}</td>
+                <td>{{ row[1] | round(1, 'floor') if row[1] is not none else 0 }}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
 </div>
 
-
+<hr style="border-top: 3px double #8c8b8b;">
 
 <!-- prepare a DOM container with width and height -->
-<div id="main" style="width: 600px;height:400px;"></div>
-<script type="text/javascript">
-    // based on prepared DOM, initialize echarts instance
-    var myChart = echarts.init(document.getElementById('main'));
+<div id="main" style="width: 600px;height:400px; left:30%"></div>
+<div align="right" name="container_pie_t_cirugia" id="container_pie_t_cirugia"
+     style="text-decoration-color: black; width:100%;	height:500px;font-size:11px;"></div>
 
-    // specify chart configuration item and data
-    var option = {
-        title: {
-            text: 'ECharts entry example'
-        },
-        tooltip: {},
-        legend: {
-            data: ['Sales']
-        },
-        xAxis: {
-            data: ["shirt", "cardign", "chiffon shirt", "pants", "heels", "socks"]
-        },
-        yAxis: {},
-        series: [{
-            name: 'Sales',
-            type: 'bar',
-            data: [5, 20, 36, 10, 10, 20]
-        }]
-    };
+<script>
+    function setcriterio() {
+        var combo = $('#combofiltro option:selected').text();
+        switch (combo) {
+            case "Por institucion":
+                $('#criterio').val("institucion");
+                break;
+            case "Por sexo":
+                $('#criterio').val("sexo");
+                break;
+            case "Por grupos de edad":
+                $('#criterio').val("edad");
+                break;
+            case "Por tipo de usuario":
+                $('#criterio').val("tipo_usuario");
+                break;
+            case "Por estado civil":
+                $('#criterio').val("estado_civil");
+                break;
+            default:
+                $('#criterio').val("institucion");
+        }
+    }
 
-    // use configuration item and data specified to show chart
-    myChart.setOption(option);
+    console.log($('#criterio').val());
 </script>
+
 <script>
     $('#datepicker').datepicker({
         uiLibrary: 'bootstrap4'
@@ -127,5 +162,70 @@
         uiLibrary: 'bootstrap4'
     });
 </script>
+<script>
+    $(document).ready(function () {
+        $('#tabla_resultados').DataTable({});
+    });
+</script>
+
+<script type="text/javascript">
+    // based on prepared DOM, initialize echarts instance
+    var myChart = echarts.init(document.getElementById('main'));
+    // specify chart configuration item and data
+    var option = {
+        title: {
+            text: 'Grafico de Barras'
+        },
+        tooltip: {},
+        legend: {
+            data: ['{{ criterio }}']
+        },
+        xAxis: {
+            data: [{% for item in lista_ips %}
+                "{{item[0]}}",
+            {% endfor %}]
+        },
+        yAxis: {},
+        series: [{
+            name: '{{ criterio }}',
+            type: 'bar',
+            data: [{% for item in lista_ips %}
+                "{{item[1]}}",
+            {% endfor %}]
+        }]
+    };
+
+    // use configuration item and data specified to show chart
+    myChart.setOption(option);
+</script>
+
+
+<script>
+    var criterio = $('#criterio').val();
+    var chart = AmCharts.makeChart("container_pie_t_cirugia", {
+        "type": "pie",
+        "titles": [{
+            "text": "Promedio de tiempo de espera discriminados por {{ criterio }}"
+                    }],
+        "theme": "light",
+        "innerRadius": "40%",
+        "gradientRatio": [-0.4, -0.4, -0.4, -0.4, -0.4, -0.4, 0, 0.1, 0.2, 0.1, 0, -0.2, -0.5],
+        "dataProvider": {{ t_espera_data | safe }},
+        "balloonText": "[[value]]",
+        "valueField": "t_espera",
+        "titleField": "{{ criterio }}",
+        "balloon": {
+            "drop": true,
+            "adjustBorderColor": false,
+            "color": "#FFFFFF",
+            "fontSize": 16
+        },
+        "export": {
+            "enabled": true
+        }
+    });
+</script>
+
+
 </body>
 </html>
