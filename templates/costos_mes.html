@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <!-- including ECharts file -->
-    <script src="static/echarts.min.js"></script>
+    {#    <script src="static/echarts.min.js"></script>#}
 
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -27,13 +27,16 @@
 
 
     <!-- Resources -->
-    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-    <script src="https://www.amcharts.com/lib/3/pie.js"></script>
-    <script src="https://www.amcharts.com/lib/3/plugins/animate/animate.min.js"></script>
-    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all"/>
-    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
-{#    <script src="static/pietcirugia.js"></script>#}
+     <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+       <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+    {#    <script src="static/pietcirugia.js"></script>#}
 
 </head>
 <body style='background-image: url("/static/fondo.png"); background-size: 100%; background-repeat: repeat;'>
@@ -55,54 +58,33 @@
 </button>
 </div>
 <hr style="border-top: 3px double #8c8b8b;">
-<h4 align="center"><i>Promedio en tiempos de espera</i></h4>
+<h4 align="center"><i>Costos mensuales por grupos de edad</i></h4>
 <form id="filtros" method="post">
     <div class="container">
         <div class="row">
             <div class="col-sm">
-                <b>Seleccione consulta:</b>
-                <select class="form-control form-control-lg" name="combounidad">
-                    <option>Tiempos de espera en citas medicas</option>
-                    <option>Tiempos de espera en urgencias</option>
-                </select>
+                    <b>Seleccione la ciudad:</b>
+                    <select name="city1" class="form-control">
+                        {% for row in lista_ciudades %}
+                            <option>{{ row[0] | safe }}</option>
+                        {% endfor %}
+                    </select>
             </div>
-        </div>
-        <div class="row">
 
             <div class="col-sm">
                 <div class="form-group">
-                    <b for="sel1">Seleccione filtro:</b>
-                    <select class="form-control" id="combofiltro" name="combofiltro">
-                        <option>Por institucion</option>
-                        <option>Por sexo</option>
-                        <option>Por grupos de edad</option>
-                        <option>Por tipo de usuario</option>
-                        <option>Por estado civil</option>
+                    <b for="sel1">Seleccione periodo:</b>
+                    <select class="form-control" id="combofiltro" name="periodo">
+                        <option>2006</option>
+                        <option>2007</option>
+                        <option>2008</option>
                     </select>
                 </div>
-                <div class="radio">
-                    <label><input type="radio" name="radiotiempo" id="radtiempomin" value="tiempo_espera_minutos"
-                                  checked>Tiempo en minutos</label>
-                </div>
-                <div class="radio">
-                    <label><input type="radio" name="radiotiempo" id="radtiemposeg" value="tiempo_espera_segundos">Tiempo
-                        en segundos</label>
-                </div>
-
-
             </div>
-            <div class="col-sm">
-                <b>Periodo</b><br>
-                DE
-                <input name="datepicker" id="datepicker" width="270"/>
-                A
-                <input name="datepicker2" id="datepicker2" width="270"/>
-            </div>
-
         </div>
         <div class="row">
             <div class="col-sm">
-                <Button id="boton_indexar" onclick="setcriterio()" type="submit" form="filtros" class="btn btn-success">
+                <Button id="boton_indexar" type="submit" form="filtros" class="btn btn-success">
                     <span class="glyphicon glyphicon-ok"></span> Consultar
                 </Button>
             </div>
@@ -116,16 +98,22 @@
         <thead class="thead-dark">
         <tr>
             <th scope="col">#</th>
-            <th scope="col">nombre</th>
-            <th scope="col">nivel</th>
+            <th scope="col">mes</th>
+            <th scope="col">menores de 20 años</th>
+            <th scope="col">entre 20 y 30 años</th>
+            <th scope="col">entre 30 y 50 años</th>
+            <th scope="col">mayores de 50 años</th>
         </tr>
         </thead>
         <tbody>
-        {% for row in lista_ips %}
+        {% for row in t_espera_data %}
             <tr>
                 <th scope="row">{{ loop.index }}</th>
-                <td>{{ row[0] }}</td>
-                <td>{{ row[1] | round(1, 'floor') if row[1] is not none else 0 }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] | round(1, 'floor') if row[2] is not none else 0 }}</td>
+                <td>{{ row[3] | round(1, 'floor') if row[3] is not none else 0 }}</td>
+                <td>{{ row[4] | round(1, 'floor') if row[4] is not none else 0 }}</td>
+                <td>{{ row[5] | round(1, 'floor') if row[5] is not none else 0 }}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -135,7 +123,6 @@
 <hr style="border-top: 3px double #8c8b8b;">
 
 <!-- prepare a DOM container with width and height -->
-<div id="main" style="width: 600px;height:400px; left:30%"></div>
 <div align="right" name="container_pie_t_cirugia" id="container_pie_t_cirugia"
      style="text-decoration-color: black; width:100%;	height:500px;font-size:11px;"></div>
 
@@ -180,62 +167,85 @@
     });
 </script>
 
-<script type="text/javascript">
-    // based on prepared DOM, initialize echarts instance
-    var myChart = echarts.init(document.getElementById('main'));
-    // specify chart configuration item and data
-    var option = {
-        title: {
-            text: 'Grafico de Barras'
-        },
-        tooltip: {},
-        legend: {
-            data: ['{{ criterio }}']
-        },
-        xAxis: {
-            data: [{% for item in lista_ips %}
-                "{{item[0]}}",
-            {% endfor %}]
-        },
-        yAxis: {},
-        series: [{
-            name: '{{ criterio }}',
-            type: 'bar',
-            data: [{% for item in lista_ips %}
-                "{{item[1]}}",
-            {% endfor %}]
-        }]
-    };
-
-    // use configuration item and data specified to show chart
-    myChart.setOption(option);
-</script>
-
 
 <script>
-    var criterio = $('#criterio').val();
-    var chart = AmCharts.makeChart("container_pie_t_cirugia", {
-        "type": "pie",
-        "titles": [{
-            "text": "Promedio de tiempo de espera discriminados por {{ criterio }}"
-                    }],
-        "theme": "light",
-        "innerRadius": "40%",
-        "gradientRatio": [-0.4, -0.4, -0.4, -0.4, -0.4, -0.4, 0, 0.1, 0.2, 0.1, 0, -0.2, -0.5],
-        "dataProvider": {{ t_espera_data | safe }},
-        "balloonText": "[[value]]",
-        "valueField": "t_espera",
-        "titleField": "{{ criterio }}",
-        "balloon": {
-            "drop": true,
-            "adjustBorderColor": false,
-            "color": "#FFFFFF",
-            "fontSize": 16
-        },
-        "export": {
-            "enabled": true
+    var myChart = echarts.init(document.getElementById('container_pie_t_cirugia'));
+    var app = {};
+option = null;
+option = {
+    title: {
+        text: 'Costos por grupos de edad'
+    },
+    tooltip : {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross',
+            label: {
+                backgroundColor: '#6a7985'
+            }
         }
-    });
+    },
+    legend: {
+        data:["edad<20", "20>=edad<30","30>=edad<50","50<edad"]
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : false,
+            data : ['Jan' ,'Feb' ,'Mar' ,'Apr' ,'May' ,'Jun' ,'Jul' ,'Aug' ,'Sep' , 'Oct' ,'Nov' ,'Dec']
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value'
+        }
+    ],
+    series : [
+        {
+            name:'edad<20',
+            type:'line',
+            stack: '总量',
+            areaStyle: {},
+            data:[{% for item in t_espera_data %}"{{item[2]}}",{% endfor %}]
+        },
+        {
+            name:'20>=edad<30',
+            type:'line',
+            stack: '总量',
+            areaStyle: {},
+            data:[{% for item in t_espera_data %}"{{item[3]}}",{% endfor %}]
+        },
+        {
+            name:'30>=edad<50',
+            type:'line',
+            stack: '总量',
+            areaStyle: {},
+            data:[{% for item in t_espera_data %}"{{item[4]}}",{% endfor %}]
+        },
+        {
+            name:'50<edad',
+            type:'line',
+            stack: '总量',
+            areaStyle: {normal: {}},
+            data:[{% for item in t_espera_data %}"{{item[5]}}",{% endfor %}]
+        }
+    ]
+};
+;
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
 </script>
 
 

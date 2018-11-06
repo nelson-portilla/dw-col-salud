@@ -89,6 +89,44 @@ def obtener():
     else:
         return render_template('index.html', lista_ips="", t_espera_data="")
 
+@app.route('/costos')
+def cargar_costos():
+    print "Entro en costos"
+    lista_resultado = objconsulta.costos_x_ciudad()
+    lista_ciudades = objconsulta.costos_get_ciudad()
+    logging.info(lista_resultado)
+    return render_template('costos.html', lista_ips="", t_espera_data=lista_resultado, lista_ciudades=lista_ciudades)
+
+@app.route('/costos', methods=['POST'])
+def get_costos():
+    print "Entro en get costos"
+    print request.form["city1"]
+    print request.form["city2"]
+    if request.form['radiotipo']=="dos_ciudades":
+        lista_resultado = objconsulta.costos_x_ciudades(request.form["city1"], request.form["city2"])
+    else:
+        lista_resultado = objconsulta.costos_x_ciudad()
+
+    lista_ciudades = objconsulta.costos_get_ciudad()
+    logging.info(lista_resultado)
+    return render_template('costos.html', t_espera_data=lista_resultado, lista_ciudades=lista_ciudades)
+
+@app.route('/costosmes')
+def cargar_costos_mes():
+    print "Entro en costos mes"
+    lista_resultado = objconsulta.costos_mes("2006", "Cali")
+    lista_ciudades = objconsulta.costos_get_ciudad()
+    logging.info(lista_resultado)
+    return render_template('costos_mes.html', t_espera_data=lista_resultado, lista_ciudades=lista_ciudades)
+
+@app.route('/costosmes', methods=['POST'])
+def get_costos_mes():
+    print "Entro en get costos mes"
+    lista_resultado = objconsulta.costos_mes(request.form["periodo"], request.form["city1"])
+    lista_ciudades = objconsulta.costos_get_ciudad()
+    logging.info(lista_resultado)
+    return render_template('costos_mes.html', t_espera_data=lista_resultado, lista_ciudades=lista_ciudades)
+
 if __name__ == '__main__':
     # CONFIGURACION PARA LOG
     logging.basicConfig(filename=LOG_FILE,\
